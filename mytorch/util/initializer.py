@@ -1,12 +1,15 @@
 import numpy as np
 
 def xavier_initializer(shape):
-    "TODO: implement xavier_initializer" 
-    return ...
+    scale = np.sqrt(2.0 / (shape[0] + shape[1]))
+    data = np.random.normal(0, scale, (shape[0], shape[1]))
+    return data
 
 def he_initializer(shape):
-    "TODO: implement he_initializer" 
-    return ...
+    scale = np.sqrt(2.0 / shape[0])
+    data = np.random.normal(0, scale, (shape[0], shape[1]))
+    return data
+
 
 def random_normal_initializer(shape, mean=0.0, stddev=0.05):
     "TODO: implement random_normal_initializer" 

@@ -10,3 +10,4 @@ class SGD(Optimizer):
     def step(self):
         "TODO: implement SGD algorithm"
         pass
+

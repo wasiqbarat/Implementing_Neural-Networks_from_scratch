@@ -26,3 +26,4 @@ class Model:
         for attribName, attribValue in self.__dict__.items():
             if isinstance(attribValue, Layer):
                 print(attribName + ': ', attribValue)
+

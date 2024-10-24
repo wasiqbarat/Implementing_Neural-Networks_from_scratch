@@ -10,7 +10,7 @@ def step(x: Tensor) -> Tensor:
     if req_grad:
         def grad_fn(grad: np.ndarray):
             return grad * 0
-
+        
         depends_on = [Dependency(x, grad_fn)]
     else:
         depends_on = []
