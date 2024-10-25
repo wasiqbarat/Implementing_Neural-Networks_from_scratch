@@ -1,5 +1,9 @@
-from mytorch import Tensor
-from mytorch.layer import Layer
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from tensor import Tensor
+from layer import Layer
 
 import numpy as np
 

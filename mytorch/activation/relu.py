@@ -1,11 +1,13 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import numpy as np
-from mytorch import Tensor, Dependency
+from tensor import Tensor, Dependency
 
 def relu(x: Tensor) -> Tensor:
     "TODO: implement relu function"
 
-    # use np.maximum
-    # ReLU forward pass: max(0, x)
     data = np.maximum(0, x.data)
     req_grad = x.requires_grad
     

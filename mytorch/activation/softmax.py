@@ -1,8 +1,11 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import numpy as np
-from mytorch import Tensor, Dependency
+from tensor import Tensor, Dependency
 
-
-def softmax(x: Tensor) -> Tensor:
+def softmax(tensor: Tensor) -> Tensor:
     """
     TODO: implement softmax function
     hint: you can do it using function you've implemented (not directly define grad func)
@@ -11,17 +14,16 @@ def softmax(x: Tensor) -> Tensor:
         2. using matrix mul to do it :) (recommended)
     hint: a/b = a*(b^-1)
     """
+    
+    max_vals = Tensor(tensor.data.max(axis=-1, keepdims=True))
+    shifted = tensor - max_vals
+    
+    exp_vals = shifted.exp()
+    
+    ones = Tensor(np.ones((tensor.shape[-1], 1)))
+    
+    sum_exp = exp_vals @ ones
 
-    exp_x = x.exp()
-    # Create a matrix of ones with shape (num_classes, 1)
-    # This will help us sum along the classes axis through matrix multiplication
-    ones = Tensor(np.ones((x.shape[1], 1)))
+    sum_inv = sum_exp ** -1
     
-    # Calculate sum of exponentials for each sample
-    # exp_x @ ones will give us shape (batch_size, 1)
-    sum_exp = exp_x @ ones
-    
-    # Now we need to divide exp(x) by sum_exp
-    # Using the hint that a/b = a * (b^-1)
-    # We can use broadcasting to divide each row by its sum
-    return exp_x * (Tensor(1.0) / sum_exp)
+    return exp_vals * sum_inv

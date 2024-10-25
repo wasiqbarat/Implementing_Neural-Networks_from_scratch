@@ -1,6 +1,10 @@
-from mytorch import Tensor
-from mytorch.layer import Layer
-from mytorch.util import initializer
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from tensor import Tensor
+from layer import Layer
+from util import initializer
 
 import numpy as np
 
@@ -25,14 +29,14 @@ class Linear(Layer):
     def initialize(self):
         "TODO: initialize weight by initializer function (mode)"
         self.weight = Tensor(
-            data=initializer.initializer((self.inputs, self.outputs), self.initialize_mode),
+            data=initializer((self.inputs, self.outputs), self.initialize_mode),
             requires_grad=True
         )
 
         "TODO: initialize bias by initializer function (zero mode)"
         if self.need_bias:
             self.bias = Tensor(
-                data=initializer.initializer((self.inputs, self.outputs), mode="zero"),
+                data=initializer((self.inputs, self.outputs), mode="zero"),
                 requires_grad=True
             )
         
@@ -51,3 +55,4 @@ class Linear(Layer):
     def __str__(self) -> str:
         return "linear - total param: {} - in: {}, out: {}".format(self.inputs * self.outputs, self.inputs,
                                                                    self.outputs)
+

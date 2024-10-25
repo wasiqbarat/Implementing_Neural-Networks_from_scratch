@@ -1,5 +1,9 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import numpy as np
-from mytorch import Tensor
+from tensor import Tensor
 from PIL import Image
 from random import shuffle
 from typing import List, Tuple

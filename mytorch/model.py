@@ -1,6 +1,10 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from typing import Any, List
-from mytorch import Tensor
-from mytorch.layer import Layer, Conv2d, Linear
+from tensor import Tensor
+from layer import Layer, Conv2d, Linear
 
 "This class is an abstraction for your model."
 class Model:

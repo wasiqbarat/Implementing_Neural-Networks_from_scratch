@@ -1,5 +1,10 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from tensor import Tensor
+
 from typing import Any
-from mytorch import Tensor
 
 "This is an abstract class for layers."
 class Layer:

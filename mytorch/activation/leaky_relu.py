@@ -1,20 +1,17 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import numpy as np
-from mytorch import Tensor, Dependency
+from tensor import Tensor, Dependency
 
 def leaky_relu(x: Tensor, alpha: float = 0.01) -> Tensor:
     """
-    Implements the Leaky ReLU activation function: 
-    f(x) = x if x > 0
-    f(x) = alpha * x if x <= 0
-    
-    Args:
-        x: Input tensor
-        alpha: Slope for negative values (default 0.01)
-        
-    Returns:
-        Tensor with Leaky ReLU activation applied
+    TODO: implement leaky_relu function.
+    fill 'data' and 'req_grad' and implement LeakyRelu grad_fn
+    hint: use np.where like Relu method but for LeakyRelu
     """
-    # Leaky ReLU forward pass: max(alpha*x, x)
+
     data = np.where(x.data > 0, x.data, alpha * x.data)
     req_grad = x.requires_grad
 
