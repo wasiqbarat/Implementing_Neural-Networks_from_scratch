@@ -131,37 +131,24 @@ class Tensor:
     # Done
     def __setitem__(self, idcs, other):
         "TODO: handle tensor item assignment."
-        
-        # Convert other to a tensor if it isn't already
         other = ensure_tensor(other)
     
-        # If neither tensor requires gradients, simply update the data
         if not self.requires_grad and not other.requires_grad:
             self._data[idcs] = other.data
             return
         
-        # If gradients are required, we need to handle this as a compound operation
-        # First, create a zero tensor of the same shape as self
         mask = np.zeros_like(self.data)
         mask[idcs] = 1
     
-        # The operation can be viewed as:
-        # result = original * (1 - mask) + new_values * mask
-    
-        # Create temporary tensors for the computation
         mask_tensor = Tensor(mask, requires_grad=False)
         inverse_mask_tensor = Tensor(1 - mask, requires_grad=False)
     
-        # Compute the new tensor value
-        # self * (1 - mask) + other * mask
         new_tensor = self * inverse_mask_tensor + other * mask_tensor
     
-        # Update the current tensor's data and dependencies
         self._data = new_tensor.data
         self.requires_grad = new_tensor.requires_grad
         self.depends_on = new_tensor.depends_on
     
-        # If gradients were being tracked, ensure grad is zeroed
         if self.requires_grad:
             self.zero_grad()
 
@@ -174,7 +161,12 @@ class Tensor:
                 grad = Tensor(1.0)
             else:
                 raise RuntimeError("grad must be specified for non-0-tensor")
+            
+        if self.grad is None:
+            self.zero_grad()
+        
         self.grad.data = self.grad.data + grad.data
+
         for dependency in self.depends_on:
             backward_grad = dependency.grad_fn(grad.data)
             dependency.tensor.backward(Tensor(backward_grad))
@@ -197,7 +189,6 @@ def _tensor_sum(t: Tensor) -> Tensor:
     if req_grad:
         def grad_fn(grad: np.ndarray):
             return grad * np.ones_like(t.data)
-
         depends_on = [Dependency(t, grad_fn)]
 
     else:
@@ -367,26 +358,23 @@ def _mul(t1: Tensor, t2: Tensor) -> Tensor:
 
 
 # Done
-def _matmul(t1: Tensor, t2: Tensor) -> Tensor:
-    "TODO: implement matrix multiplication"
-    data = np.matmul(t1.data, t2.data)
-    requires_grad = t1.requires_grad or t2.requires_grad
+def _matmul(self, other: Tensor) -> Tensor:      
+    data = np.matmul(self.data, other.data)
+    requires_grad = self.requires_grad or other.requires_grad
 
     depends_on: List[Dependency] = []
 
-    if t1.requires_grad:
+    if self.requires_grad:
         def grad_fn1(grad: np.ndarray) -> np.ndarray:
-            return grad @ t2.data.T
+            return grad @ other.data.T
 
-        depends_on.append(Dependency(t1, grad_fn1))
+        depends_on.append(Dependency(self, grad_fn1))
 
-    if t2.requires_grad:
+    if other.requires_grad:
         def grad_fn2(grad: np.ndarray) -> np.ndarray:
-            return t1.data.T @ grad
+            return self.data.T @ grad
 
-        depends_on.append(Dependency(t2, grad_fn2))
+        depends_on.append(Dependency(other, grad_fn2))
 
-    return Tensor(data,
-                  requires_grad,
-                  depends_on)
+    return Tensor(data, requires_grad, depends_on)
 
